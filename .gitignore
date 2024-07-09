@@ -1,0 +1,7 @@
+.nvm/
+
+node_modules/
+
+.parcel*
+
+dist/
