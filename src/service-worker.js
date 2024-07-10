@@ -6,7 +6,7 @@ chrome.sidePanel
     .catch((error) => console.error(error));
 
 chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
-    console.log(`!!! ${tab.url}`);
+    
     if (!tab.url) return;
     if (tab.url.startsWith(GARMIN_ACTIVITIES)) {
         await chrome.sidePanel.setOptions({
@@ -20,4 +20,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
             enabled: false
         });
     }
+});
+
+chrome.runtime.onMessage.addListener((message) => {
+    chrome.storage.session.set(message);
 });
