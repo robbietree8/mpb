@@ -11,7 +11,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
     if (tab.url.startsWith(GARMIN_ACTIVITIES)) {
         await chrome.sidePanel.setOptions({
             tabId,
-            path: 'index.html',
+            path: 'side/index.html',
             enabled: true
         });
     } else {

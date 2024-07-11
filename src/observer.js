@@ -1,25 +1,45 @@
-async function detail(aid) {
-    return await jsonGet(
-        `/activity-service/activity/${aid}/splits?_=${Date.now()}`,
-        `https://connect.garmin.cn/modern/activity/${aid}`
-    );
+
+const callback = onActivityMutated(ids => {
+    const send = m => window.postMessage({ mbp: { activities: m } })
+    Promise.all(ids.map(activeSplit)).then(send, console.error);
+});
+
+new MutationObserver(callback).observe(
+    document.querySelector("div.main-body"),
+    { childList: true, subtree: true }
+);
+
+async function activeSplit(id) {
+    const isType = t => ({ type }) => type === t;
+    const referrer = `https://connect.garmin.cn/modern/activity/${id}`;
+    const activity = api => `/activity-service/activity/${id}/${api}?_=${Date.now()}`
+
+    const { splits } = await get(activity("typedsplits"), referrer);
+    const { lapIndexes: idxs = [], ...split } = splits.find(isType("INTERVAL_ACTIVE"));
+
+    const { lapDTOs: laps } = await get(activity("splits"), referrer);
+    split.laps = idxs.length > 0 ? laps.slice(idxs[0], idxs.at(-1) + 1) : laps;
+    return split;
 }
 
-async function summary(aid) {
-    return await jsonGet(
-        `/activity-service/activity/${aid}/typedsplits?_=${Date.now()}`,
-        `https://connect.garmin.cn/modern/activity/${aid}`
-    );
+function onActivityMutated(callback) {
+    const className = pred => ([e]) => e && e.className && pred(e.className);
+    const activityIn = className(s => s.startsWith("list-item"));
+    const id = ({ href }) => href.split("/").at(-1);
+    return (mutations, observer) => {
+        const pred = ({ addedNodes: a, removedNodes: r }) => activityIn(a) || activityIn(r)
+        const mutated = mutations.findIndex(pred) != -1;
+
+        if (mutated) {
+            const [...nodes] = document.querySelectorAll("a.inline-edit-target");
+            callback(nodes.map(id));
+        }
+    };
 }
 
-async function jsonGet(url, referrer) {
-    function accessToken() {
-        return JSON.parse(localStorage.token).access_token;
-    }
-
-    function bustValue() {
-        return URL_BUST_VALUE;
-    }
+async function get(url, referrer) {
+    const accessToken = () => JSON.parse(localStorage.token).access_token;
+    const bustValue = () => URL_BUST_VALUE;
 
     const response = await fetch(url, {
         "headers": {
@@ -48,44 +68,3 @@ async function jsonGet(url, referrer) {
     });
     return response.ok ? response.json() : Promise.reject(new Error(response.status));
 }
-
-function observe(target, callback) {
-    const config = { childList: true, subtree: true };
-    const hasActivity = function (nodes) {
-        return nodes.length > 0
-            && nodes[0].className
-            && nodes[0].className.startsWith("list-item");
-    };
-
-    const observer = new MutationObserver((mutations, observer) => {
-        const changed = mutations.findIndex((m) => hasActivity(m.addedNodes) || hasActivity(m.removedNodes)) != -1
-        if (changed) callback();
-    });
-    observer.observe(document.querySelector(target), config);
-    return observer;
-}
-
-function activities() {
-    const links = document.querySelectorAll("a.inline-edit-target");
-    return [...links].map(a => a.href.split("/").at(-1));
-}
-
-
-function post() {
-    const zip = async (aid) => {
-        const s = await summary(aid);
-        const { lapDTOs } = await detail(aid);
-        const { lapIndexes = [], ...activity } = s.splits.find(({ type }) => type === "INTERVAL_ACTIVE")
-        activity.laps = lapIndexes.length > 1 ? lapDTOs.slice(lapIndexes.at(0), lapIndexes.at(-1) + 1) : lapDTOs;
-        return activity;
-    }
-    Promise.all(activities().map(zip))
-        .then(
-            rs => window.postMessage({ mbp: { activities: rs } }),
-            e => console.error(e)
-        )
-}
-
-observe('div.main-body', post);
-
-console.log("Observer is ready!");
