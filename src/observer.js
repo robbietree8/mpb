@@ -23,16 +23,19 @@ async function activeSplit(id) {
 }
 
 function onActivityMutated(callback) {
-    const className = pred => ([e]) => e && e.className && pred(e.className);
-    const activityIn = className(s => s.startsWith("list-item"));
+    // TODO CASE: treadmill running
+    const selector = "i.icon-activity-running";
+    const activityIn = ([e]) => e && (e.querySelector instanceof Function) && e.querySelector(selector);
+    const isRunning = e => e.querySelector(selector);
+    const anchor = e => e.querySelector("a.inline-edit-target");
     const id = ({ href }) => href.split("/").at(-1);
     return (mutations, observer) => {
         const pred = ({ addedNodes: a, removedNodes: r }) => activityIn(a) || activityIn(r)
         const mutated = mutations.findIndex(pred) != -1;
 
         if (mutated) {
-            const [...nodes] = document.querySelectorAll("a.inline-edit-target");
-            callback(nodes.map(id));
+            const [...nodes] = document.querySelectorAll("li.list-item");
+            callback(nodes.filter(isRunning).map(anchor).map(id));
         }
     };
 }
