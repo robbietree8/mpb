@@ -24,9 +24,9 @@ async function activeSplit(id) {
 
 function onActivityMutated(callback) {
     // TODO CASE: treadmill running
-    const selector = "i.icon-activity-running";
-    const activityIn = ([e]) => e && (e.querySelector instanceof Function) && e.querySelector(selector);
-    const isRunning = e => e.querySelector(selector);
+    const className = pred => ([e]) => e && e.className && pred(e.className);
+    const activityIn = className(s => s.startsWith("list-item"));
+    const isRunning = e => e.querySelector("i.icon-activity-running");
     const anchor = e => e.querySelector("a.inline-edit-target");
     const id = ({ href }) => href.split("/").at(-1);
     return (mutations, observer) => {

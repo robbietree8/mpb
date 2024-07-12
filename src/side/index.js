@@ -5,6 +5,7 @@ chrome.storage.session.onChanged.addListener(({ activities: a }) => refresh(a.ne
 
 function refresh(activities) {
     const container = document.querySelector("#plots");
+    container.replaceChildren();
     [
         [lapBoxes(activities), { title: "Running Performance Distribution", showlegend: false, height: 350 }],
         [lapScatters(activities), { title: "Running Performance Trend", height: 350 }],
