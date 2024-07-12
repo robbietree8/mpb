@@ -23,6 +23,7 @@ function lapBoxes(activities) {
     const trace = {
         y: activities.map(mpb),
         x: activities.map(({ startTimeLocal: v }) => date(v)),
+        hoverinfo: "skip",
         type: "scatter",
         mode: "lines",
         name: "Trace"
