@@ -18,7 +18,7 @@ async function activeSplit(id) {
     const { lapIndexes: idxs = [], ...split } = splits.find(isType("INTERVAL_ACTIVE"));
 
     const { lapDTOs: laps } = await get(activity("splits"), referrer);
-    split.laps = idxs.length > 0 ? laps.slice(idxs[0], idxs.at(-1) + 1) : laps;
+    split.laps = idxs.length > 0 ? laps.slice(idxs[0] - 1, idxs.at(-1)) : laps;
     return split;
 }
 
