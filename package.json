@@ -1,7 +1,7 @@
 {
     "name": "mpb",
     "scripts": {
-        "build": "parcel build src/manifest.json src/side/index.html --config @parcel/config-webextension"
+        "build": "parcel build src/manifest.json src/side/*.html --config @parcel/config-webextension"
     },
     "devDependencies": {
         "@parcel/config-webextension": "^2.12.0",

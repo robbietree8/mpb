@@ -1,4 +1,5 @@
-const GARMIN_ACTIVITIES = 'https://connect.garmin.cn/modern/activities';
+const GARMIN_ACTIVITIES = "https://connect.garmin.cn/modern/activities";
+const GARMIN_WORKOUT = "https://connect.garmin.cn/modern/workout/";
 
 // Allows users to open the side panel by clicking on the action toolbar icon
 chrome.sidePanel
@@ -6,12 +7,13 @@ chrome.sidePanel
     .catch((error) => console.error(error));
 
 chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
-    
+
     if (!tab.url) return;
-    if (tab.url.startsWith(GARMIN_ACTIVITIES)) {
+    // TODO tab.url.startsWith(GARMIN_ACTIVITIES) ||
+    if (tab.url.startsWith(GARMIN_WORKOUT)) {
         await chrome.sidePanel.setOptions({
             tabId,
-            path: 'side/index.html',
+            path: "side/index.html",
             enabled: true
         });
     } else {

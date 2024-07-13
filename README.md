@@ -1,6 +1,5 @@
-![Meters Per Beat Extension](mpb.png)
 
-如上所示，这是一款面向 **入门跑者** 和 **[MAF训练法][maf]跑者** 的，聚焦于跑步训练中 **[速心比](#速心比meters-per-beat)** 指标数据可视化的浏览器扩展程序（俗称：插件）。
+这是一款面向 **入门跑者** 和 **[MAF训练法][maf]跑者** 的，聚焦于跑步训练中 **[速心比](#速心比meters-per-beat)** 指标数据可视化的浏览器扩展程序（俗称：插件）。
 
 [maf]: https://weread.qq.com/web/reader/17632120716aaf23176ca69
 
@@ -59,6 +58,8 @@ npm run build
 在浏览器中打开并登录 [Garmin Connect 中国][gcc]。
 
 ### 跑步活动速心比概览
+
+![Meters Per Beat Extension](mpb-activities.png)
 
 1. 访问[跑步活动页][runnings]；
 1. 点击扩展程序图标，即展开侧边面板。

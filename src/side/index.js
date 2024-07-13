@@ -1,34 +1,36 @@
-import Plotly from 'plotly.js-dist-min'
 
-chrome.storage.session.get(null, ({ activities: a }) => refresh(a));
-chrome.storage.session.onChanged.addListener(({ activities: a }) => refresh(a.newValue));
+import { date, pace, mpb, Plotly } from './mpb'
 
-function refresh(activities) {
+chrome.storage.session.get(null, render);
+// chrome.storage.session.onChanged.addListener(({ page: p, activities: a }) => render({ page: p.newValue, activities: a.newValue }));
+
+function render({ page, activities }) {
     const container = document.querySelector("#plots");
-    container.replaceChildren();
+    // container.replaceChildren(); // clean previous plots
+
     [
-        [lapBoxes(activities), { title: "Running Performance Distribution", showlegend: false, height: 350 }],
-        [lapScatters(activities), { title: "Running Performance Trend", height: 350 }],
-        // [summaries(activities), { title: "Perf of Running" }],
-    ].forEach(([data, layout]) => plot(container, data, layout));
+        [lapBoxes(activities), { title: "近七日速心比分布对比", showlegend: false, height: 350 }],
+        [lapScatters(activities), { title: "近七日速心比趋势对比", height: 350 }],
+    ].forEach(([data, layout]) => draw(container, div => Plotly.newPlot(div, data, layout, { responsive: true })));
+
+    // if (page === "activities") {
+    //     draw(container, div => {
+    //         const layout = { title: "最近的跑步" };
+    //         const config = { responsive: true, displayModeBar: false };
+    //         Plotly.newPlot(div, summaries(data), layout, config);
+    //     });
+    //     return;
+    // }
 }
 
-function plot(container, data, layout) {
+function draw(container, callback) {
     const div = document.createElement("div");
-    Plotly.newPlot(div, data, layout, { responsive: true });
     container.appendChild(div);
+    callback(div)
 }
 
-function lapBoxes(activities) {
-    const trace = {
-        y: activities.map(mpb),
-        x: activities.map(({ startTimeLocal: v }) => date(v)),
-        hoverinfo: "skip",
-        type: "scatter",
-        mode: "lines",
-        name: "Trace"
-    };
-    return activities.map(({ startTimeLocal: v, laps }) => {
+function lapBoxes(data) {
+    return data.map(({ startTimeLocal: v, laps }) => {
         return {
             y: laps.map(mpb).toSorted((a, b) => a - b),
             hoverinfo: "y",
@@ -36,11 +38,11 @@ function lapBoxes(activities) {
             type: "box",
             name: date(v)
         }
-    }).toReversed().concat(trace);
+    }).toReversed();
 }
 
-function lapScatters(activities) {
-    return activities.map(({ startTimeLocal: v, laps }) => {
+function lapScatters(data) {
+    return data.map(({ startTimeLocal: v, laps }) => {
         const detail = ({
             averageHR: h,
             averageRunCadence: c,
@@ -60,17 +62,17 @@ function lapScatters(activities) {
 }
 
 function summaries(activities) {
-    return {
+    return [{
         type: 'table',
+        columnwidth: [3, 1.5, 3, 2, 2, 3],
         header: {
             values: [
-                ["<b>DATE</b>"],
-                ["<b>HR</b>"],
-                ["<b>Cadence</b>"],
-                ["<b>Pace</b>"],
-                ["<b>GAP</b>"],
-                ["<b>Speed.mpm</b>"],
-                ["<b>Pref.mpb</b>"],
+                ["<b>日期</b>"],
+                ["<b>心率</b>"],
+                ["<b>步频</b>"],
+                ["<b>配速</b>"],
+                ["<b>配速<sup>ga</sup></b>"],
+                ["<b>速心比"],
             ],
             align: "center",
             line: { width: 1, color: 'black' },
@@ -79,12 +81,11 @@ function summaries(activities) {
         },
         cells: {
             values: [
-                ({ startTimeLocal: v }) => date(v),
+                ({ startTimeLocal: v }) => new Date(v).toLocaleDateString("fr-CA"),
                 ({ averageHR: v }) => v,
-                ({ averageRunCadence: v }) => v,
+                ({ averageRunningCadenceInStepsPerMinute: v }) => v,
                 ({ averageSpeed: v }) => pace(v),
                 ({ avgGradeAdjustedSpeed: v }) => pace(v),
-                ({ averageSpeed: s, avgGradeAdjustedSpeed: a }) => mpm(a, s),
                 mpb,
             ].map(f => activities.map(f)),
             format: [
@@ -93,33 +94,11 @@ function summaries(activities) {
                 ".1f",
                 "",
                 "",
-                ".2f",
                 ".3f",
             ],
             align: "center",
             line: { color: "black", width: 1 },
             font: { family: "Arial", size: 11, color: ["black"] }
         }
-    };
-}
-
-function pace(v) {
-    if (!v) return "--";
-    const sec = Math.round(1000 / v);
-    const d = new Date(new Date().toLocaleDateString()).setSeconds(sec);
-    return new Date(d).toLocaleTimeString();
-}
-function date(v) { return new Date(v).toLocaleDateString("en-US", { month: "2-digit", day: "2-digit" }); }
-
-function mpm(p, s) { return (p ? p : s) * 60; }
-
-function mpb(record) {
-    const { averageSpeed: s, avgGradeAdjustedSpeed: a, averageHR: h } = record;
-    return mpm(a, s) / h;
-}
-
-function debug(data) {
-    const e = document.createElement("pre");
-    e.innerText = JSON.stringify(data, null, 2);
-    document.querySelector("#summaries").appendChild(e);
+    }];
 }
