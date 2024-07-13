@@ -4,20 +4,22 @@ const callback = onActivityMutated(ids => {
     Promise.all(ids.map(activeSplit)).then(send, console.error);
 });
 
-new MutationObserver(callback).observe(
-    document.querySelector("div.main-body"),
-    { childList: true, subtree: true }
-);
+// new MutationObserver(callback).observe(
+//     document.querySelector("div.main-body"),
+//     { childList: true, subtree: true }
+// );
+
+console.log("Observer is ready!");
 
 async function activeSplit(id) {
     const isType = t => ({ type }) => type === t;
     const referrer = `https://connect.garmin.cn/modern/activity/${id}`;
     const activity = api => `/activity-service/activity/${id}/${api}?_=${Date.now()}`
 
-    const { splits } = await get(activity("typedsplits"), referrer);
+    const { splits } = await api("GET", activity("typedsplits"), referrer);
     const { lapIndexes: idxs = [], ...split } = splits.find(isType("INTERVAL_ACTIVE"));
 
-    const { lapDTOs: laps } = await get(activity("splits"), referrer);
+    const { lapDTOs: laps } = await api("GET", activity("splits"), referrer);
     split.laps = idxs.length > 0 ? laps.slice(idxs[0] - 1, idxs.at(-1)) : laps;
     return split;
 }
@@ -40,7 +42,7 @@ function onActivityMutated(callback) {
     };
 }
 
-async function get(url, referrer) {
+async function api(method, url, referrer) {
     const accessToken = () => JSON.parse(localStorage.token).access_token;
     const bustValue = () => URL_BUST_VALUE;
 
@@ -65,7 +67,7 @@ async function get(url, referrer) {
         "referrer": referrer,
         "referrerPolicy": "strict-origin-when-cross-origin",
         "body": null,
-        "method": "GET",
+        "method": method,
         "mode": "cors",
         "credentials": "include"
     });

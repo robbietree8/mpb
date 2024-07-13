@@ -27,7 +27,7 @@
                 "poster.js"
             ],
             "matches": [
-                "https://connect.garmin.cn/modern/activities*"
+                "https://connect.garmin.cn/modern/workout/*?workoutType=running"
             ],
             "world": "ISOLATED"
         },
@@ -36,7 +36,7 @@
                 "observer.js"
             ],
             "matches": [
-                "https://connect.garmin.cn/modern/activities*"
+                "https://connect.garmin.cn/modern/workout/*?workoutType=running"
             ],
             "world": "MAIN"
         }
