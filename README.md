@@ -1,4 +1,9 @@
 
+
+
+![Activities Chart](./mpb-activities.png)
+![Activity Chart](./mpb-activity.png)
+
 这是一款面向 **入门跑者** 和 **[MAF训练法][maf]跑者** 的，聚焦于跑步训练中 **[速心比](#速心比meters-per-beat)** 指标数据可视化的浏览器扩展程序（俗称：插件）。
 
 [maf]: https://weread.qq.com/web/reader/17632120716aaf23176ca69
@@ -30,7 +35,7 @@
 
 ## 最佳实践
 
-为了更科学地分析对比多次跑步活动的[速心比指标变化](#专项训练表现变化对比)，强烈参考以下实践：
+为了更科学地分析对比多次跑步活动的速心比指标数据，强烈参考以下实践：
 
 ![课程参考](workout.png)
 
@@ -38,6 +43,12 @@
 1. 课程中至少有 **热身** 和 **跑步** 两个步骤；
 1. 步骤中 **持续时间** 和 **训练目标** 可按需调整；
 1. 保存并同步至手表，供下次训练使用。
+
+一旦课程训练数据存在后，进入课程页面会看到如下：
+
+![Workout Charts](./mpb-workout.png)
+
+
 
 ## 构建
 
@@ -52,24 +63,3 @@ npm run build
 请参见[加载已解压的扩展程序][lupe]。
 
 [lupe]: https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked
-
-## 使用
-
-在浏览器中打开并登录 [Garmin Connect 中国][gcc]。
-
-### 跑步活动速心比概览
-
-![Meters Per Beat Extension](mpb-activities.png)
-
-1. 访问[跑步活动页][runnings]；
-1. 点击扩展程序图标，即展开侧边面板。
-
-[runnings]: https://connect.garmin.cn/modern/activities?activityType=running
-
-### 专项课程活动变化对比
-
-1. 访问[训练课程页][workouts]；
-1. 选择一个[训练课程](#最佳实践)点击进入；
-1. 点击扩展程序图标，即展开侧边面板。
-
-[workouts]: https://connect.garmin.cn/modern/workouts
