@@ -1,5 +1,5 @@
-import { onMutated, observe } from "./observer";
-import { plotPanel } from "./utils";
+import { onMutated, observe } from "../lib/observer";
+import { plotPanel, unit } from "../lib/utils";
 import Plotly from 'plotly.js-dist-min';
 
 var flag = true;
@@ -26,16 +26,20 @@ observe(document.querySelector("div.main-body"), onMutated({
 function intervals(label) {
     const [...nodes] = document.querySelectorAll('tr[class^="IntervalsTable_tableRow"]');
     const pred = ({ children: [, , t] }) => t && t.innerText == label;
-    const extract = ({ children: [, , , { innerText: lap }, , , , { innerText: speed }, { innerText: gas }, { innerText: hr }] }) => {
-        return [lap, speed, gas, hr];
+    const extract = ({ children: [, , , { innerText: lap }, , , { innerText: d }, { innerText: speed }, { innerText: gas }, { innerText: hr }, , , , { innerText: c }] }) => {
+        return [lap, speed, gas, hr, c, d];
     }
     const rows = nodes.filter(pred).map(extract);
+    console.log(label);
+    const detail = ([, speed, gas, hr, c, d]) =>
+        [unit(hr, "bpm"), unit(c, "cpm"), unit(speed, "km"), unit(gas, "km"), unit(d, "km")].join("<br>");
     return [{
         y: rows.map(metersPerBeat),
         x: rows.map(([lap]) => Number(lap)),
         mode: "lines+markers",
-        hoverinfo: "x+y",
-        hovertemplate: "%{y:.3f}<extra>%{x}</extra>"
+        hovertext: rows.map(detail),
+        hoverinfo: "y",
+        hovertemplate: "<b>%{y:.3f}</b><br>%{hovertext}<extra></extra>"
     }];
 }
 

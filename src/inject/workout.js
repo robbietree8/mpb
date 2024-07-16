@@ -1,6 +1,6 @@
-import { activities, splits } from "./api";
-import { onMutated, observe } from "./observer";
-import { plotPanel } from "./utils";
+import { activities, splits } from "../lib/api";
+import { onMutated, observe } from "../lib/observer";
+import { plotPanel, unit } from "../lib/utils";
 import Plotly from 'plotly.js-dist-min';
 
 async function latest7days(workout) {
@@ -84,8 +84,4 @@ function pace(metersPerSecond) {
     const m = String(Math.trunc(sec / 60)).padStart(2, 0);
     const s = String(sec % 60).padStart(2, 0);
     return unit(`${m}:${s}`, "km");
-}
-
-function unit(primary, secondary) {
-    return `${primary}<sub>${secondary}</sub>`
 }

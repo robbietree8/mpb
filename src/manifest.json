@@ -14,40 +14,14 @@
         "service_worker": "service-worker.js"
     },
     "permissions": [
-        "sidePanel",
-        "storage",
+        "scripting",
+        "activeTab",
         "tabs"
     ],
     "action": {
         "default_title": "Meters Per Beat"
     },
-    "content_scripts": [
-        {
-            "js": [
-                "activity.js"
-            ],
-            "matches": [
-                "https://connect.garmin.cn/modern/activity/*"
-            ],
-            "world": "ISOLATED"
-        },
-        {
-            "js": [
-                "activites.js"
-            ],
-            "matches": [
-                "https://connect.garmin.cn/modern/activities*"
-            ],
-            "world": "ISOLATED"
-        },
-        {
-            "js": [
-                "workout.js"
-            ],
-            "matches": [
-                "https://connect.garmin.cn/modern/workout/*?workoutType=running"
-            ],
-            "world": "MAIN"
-        }
+    "host_permissions": [
+        "https://connect.garmin.cn/modern/*"
     ]
 }

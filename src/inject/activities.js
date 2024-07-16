@@ -1,5 +1,5 @@
-import { onMutated, observe } from './observer';
-import { plotPanel } from "./utils";
+import { onMutated, observe } from '../lib/observer';
+import { plotPanel } from "../lib/utils";
 import Plotly from 'plotly.js-dist-min';
 
 observe(document.querySelector("div.main-body"), onMutated({
