@@ -24,11 +24,10 @@
     "content_scripts": [
         {
             "js": [
-                "poster.js"
+                "activites.js"
             ],
             "matches": [
-                "https://connect.garmin.cn/modern/workout/*?workoutType=running",
-                "https://connect.garmin.cn/modern/activities?activityType=running*"
+                "https://connect.garmin.cn/modern/activity/*"
             ],
             "world": "ISOLATED"
         },
@@ -39,7 +38,7 @@
             "matches": [
                 "https://connect.garmin.cn/modern/activities?activityType=running*"
             ],
-            "world": "MAIN"
+            "world": "ISOLATED"
         },
         {
             "js": [

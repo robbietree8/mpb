@@ -1,27 +1,30 @@
-import Plotly from 'plotly.js-dist-min'
+import { onMutated, observe } from './observer';
+import Plotly from 'plotly.js-dist-min';
 
-const callback = onActivityMutated(() => {
-    const idxs = indexes();
-    console.assert(idxs, "Missing HR or Speed field");
-    const data = [{
-        y: mpbs(idxs),
-        x: dates(),
-        mode: "lines+markers",
-        hoverinfo: "x+y",
-        hovertemplate: "%{y}<br>%{x|%m/%d}"
-    }];
-    const layout = {
-        title: "速心比变化趋势",
-        height: 200,
-        margin: { l: 50, r: 50, b: 50, t: 50, pad: 4 }
-    };
-    Plotly.newPlot(plotPanel(), data, layout, { responsive: true, displayModeBar: false })
-});
-
-new MutationObserver(callback).observe(
-    document.querySelector("div.main-body"),
-    { childList: true, subtree: true }
-);
+observe(document.querySelector("div.main-body"), onMutated({
+    predicate: ({ addedNodes: a, removedNodes: r }) => {
+        const className = pred => ([e]) => e && (typeof e.className === 'string') && pred(e.className);
+        const activityIn = className(s => s.startsWith("list-item"));
+        return activityIn(a) || activityIn(r);
+    },
+    callback: () => {
+        const idxs = indexes();
+        console.assert(idxs, "Missing HR or Speed field");
+        const data = [{
+            y: mpbs(idxs),
+            x: dates(),
+            mode: "lines+markers",
+            hoverinfo: "x+y",
+            hovertemplate: "%{y:.3f}<extra>%{x|%m/%d}</extra>"
+        }];
+        const layout = {
+            title: "速心比变化趋势",
+            height: 200,
+            margin: { l: 50, r: 50, b: 50, t: 50, pad: 4 }
+        };
+        Plotly.newPlot(plotPanel(), data, layout, { responsive: true, displayModeBar: false })
+    }
+}));
 
 function plotPanel() {
     const name = "plot-panel"
