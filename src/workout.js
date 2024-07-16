@@ -1,5 +1,6 @@
 import { activities, splits } from "./api";
 import { onMutated, observe } from "./observer";
+import { plotPanel } from "./utils";
 import Plotly from 'plotly.js-dist-min';
 
 async function latest7days(workout) {
@@ -18,10 +19,7 @@ async function latest7days(workout) {
 const expr = '#pageContainer div[class^="WorkoutPageHeader_headerWrapper"]';
 
 observe(document.querySelector("div.main-body"), onMutated({
-    predicate: ({ addedNodes }) => {
-        const pred = n => n.querySelector instanceof Function && n.querySelector(expr);
-        return [...addedNodes].some(pred);
-    },
+    predicate: ({ addedNodes: [...ns] }) => ns.some(n => n.querySelector instanceof Function && n.querySelector(expr)),
     callback: async () => {
         const workout = URL.parse(window.location.href).pathname.split("/").at(-1)
         const rs = await latest7days(workout);
@@ -90,13 +88,4 @@ function pace(metersPerSecond) {
 
 function unit(primary, secondary) {
     return `${primary}<sub>${secondary}</sub>`
-}
-
-function plotPanel(id, mount) {
-    var pp = document.querySelector(`#${id}`);
-    if (pp) return pp;
-    pp = document.createElement("div");
-    pp.id = id;
-    mount(pp);
-    return pp;
 }

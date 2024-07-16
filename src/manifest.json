@@ -24,7 +24,7 @@
     "content_scripts": [
         {
             "js": [
-                "activites.js"
+                "activity.js"
             ],
             "matches": [
                 "https://connect.garmin.cn/modern/activity/*"
@@ -36,7 +36,7 @@
                 "activites.js"
             ],
             "matches": [
-                "https://connect.garmin.cn/modern/activities?activityType=running*"
+                "https://connect.garmin.cn/modern/activities*"
             ],
             "world": "ISOLATED"
         },
