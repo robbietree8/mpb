@@ -49,6 +49,15 @@
 ![Workout Charts](./mpb-workout.png)
 
 
+## 安装
+
+进入[Release][rs]，在最新的版本 Assets 中下载 “mpb.zip” 文件到本地。
+
+请参见[加载已解压的扩展程序][lupe]。
+
+[rs]: https://github.com/zhongl/mpb/releases
+[lupe]: https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked
+
 
 ## 构建
 
@@ -57,9 +66,3 @@ source .envrc
 npm ci 
 npm run build
 ```
-
-## 安装
-
-请参见[加载已解压的扩展程序][lupe]。
-
-[lupe]: https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked
