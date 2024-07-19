@@ -8,17 +8,18 @@ observe(document.querySelector("div.main-body"), onMutated({
     callback: () => {
         const prs = [...document.querySelectorAll("td i.icon-pointer-right")].map(p => p.click());
         const active = document.querySelector('span[data-value="ACTIVE"]');
-        if (prs.length == 0 && active != null) {
+        if (prs.length == 0 && active != null && document.querySelector('div[data-activity-type="running"]') != null) {
             flag = false;
+            const data = intervals(active.innerText);
 
-            if (document.querySelector('div[data-activity-type="running"]') != null) {
-                Plotly.newPlot(
-                    plotPanel("trend", n => document.querySelector("div.activity-map").before(n)),
-                    intervals(active.innerText),
-                    { title: "速心比变化趋势", height: 200, margin: { l: 50, r: 50, b: 50, t: 50, pad: 4 } },
-                    { responsive: true, displayModeBar: false }
-                );
-            }
+            console.assert(data.length > 0, `active: ${active.innerText}, rows: ${document.querySelectorAll('tr[class^="IntervalsTable_tableRow"]').length}`);
+
+            Plotly.newPlot(
+                plotPanel("trend", n => document.querySelector("div.activity-map").before(n)),
+                data,
+                { title: "速心比变化趋势", height: 200, margin: { l: 50, r: 50, b: 50, t: 50, pad: 4 } },
+                { responsive: true, displayModeBar: false }
+            );
         }
     }
 }));
@@ -30,9 +31,8 @@ function intervals(label) {
         return [lap, speed, gas, hr, c, d];
     }
     const rows = nodes.filter(pred).map(extract);
-    console.log(label);
     const detail = ([, speed, gas, hr, c, d]) =>
-        [unit(hr, "bpm"), unit(c, "cpm"), unit(speed, "km"), unit(gas, "km"), unit(d, "km")].join("<br>");
+        [unit(hr, "bpm"), unit(c, "cpm"), unit(speed, "/km"), unit(gas, "/km"), unit(d, "km")].join("<br>");
     return [{
         y: rows.map(metersPerBeat),
         x: rows.map(([lap]) => Number(lap)),
