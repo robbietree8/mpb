@@ -6,7 +6,7 @@ const cases = [
     },
     {
         regex: /https:\/\/connect.garmin.cn\/modern\/activities.*/,
-        files: ["./inject/activities.js"],
+        files: ["./inject/activities-mt.js"],
         world: "ISOLATED"
     },
     {

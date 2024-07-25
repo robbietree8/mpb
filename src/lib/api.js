@@ -17,6 +17,13 @@ export async function activities(search) {
     });
 }
 
+export async function exerciseSetsApi(activityId) {
+    return await api({
+        url: `${baseUrl}/activity-service/activity/${activityId}/exerciseSets?_=${Date.now()}`,
+        referrer: `https://connect.garmin.cn/modern/activity/${activityId}`
+    });
+}
+
 const baseUrl = "https://connect.garmin.cn";
 
 function normalize(search) {
@@ -31,7 +38,7 @@ function normalize(search) {
 
 async function api({ method = "GET", url, referrer }) {
     const accessToken = () => JSON.parse(localStorage.token).access_token;
-    const bustValue = () => URL_BUST_VALUE;
+    const bustValue = () => document.querySelector("#garmin-connect-version").innerText;
 
     const response = await fetch(url, {
         "headers": {
