@@ -104,7 +104,7 @@ function historyMaxWeights(data) {
       type: "bar",
       text: dataText,
       marker: {
-        color: "rgb(142,124,195)",
+        color: "rgb(237,208,145)",
       },
     },
   ];
