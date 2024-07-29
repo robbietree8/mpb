@@ -121,12 +121,16 @@ function trend(exercises, type) {
         }
         return groups;
       }, {})
-  ).map(({ weight, st }) => ({
-    x: [st],
-    y: [weight],
+  ).reduce((result, item) => {
+    result.x.push(item.st);
+    result.y.push(item.weight);
+    return result;
+  }, {
+    x: [],
+    y: [],
     mode: "lines+markers",
     hoverinfo: "x+y",
     hovertemplate: "%{y:.3f}<extra>%{x|%m/%d}</extra>",
     name: translate(type),
-  }));
+  });
 }
