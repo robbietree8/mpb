@@ -72,9 +72,9 @@ function exerciseWithMaxProbability(exercises) {
 function maxWeight(exercises) {
     return Object.values(
       buildExercisesWithMaxProbability(exercises).reduce((groups, item) => {
-        const { category, weight, st } = item;
+        const { category, weight, st, repetitionCount } = item;
         if (!groups[category] || weight > groups[category].weight) {
-          groups[category] = { category, weight, st };
+          groups[category] = { category, weight, st, repetitionCount };
         }
         return groups;
       }, {})
@@ -89,6 +89,7 @@ function buildExercisesWithMaxProbability(exercises) {
       category: exerciseWithMaxProbability(obj.exercises),
       weight: obj.weight / 1000,
       st: obj.startTime.substr(0, 10),
+      repetitionCount: obj.repetitionCount
     }));
 }
 
@@ -96,7 +97,7 @@ function historyMaxWeights(data) {
   const categoryWithMaxWeight = maxWeight(data);
   const dataX = categoryWithMaxWeight.map(({ category }) => translate(category));
   const dataY = categoryWithMaxWeight.map(({ weight }) => weight);
-  const dataText = categoryWithMaxWeight.map(({ weight, st }) => `${weight}Kg on ${st}`);
+  const dataText = categoryWithMaxWeight.map(({ weight, st, repetitionCount }) => `${weight}Kg x ${repetitionCount} on ${st}`);
   return [
     {
       x: dataX,

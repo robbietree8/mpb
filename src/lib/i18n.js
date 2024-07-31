@@ -10,7 +10,9 @@ const mapping = {
     "DUMBBELL_BENCH_PRESS": "哑铃卧推",
     "INCLINE_DUMBBELL_BENCH_PRESS": "哑铃上斜卧推",
     "CABLE_KICKBACK": "绳索三头臂屈伸",
-    "CABLE_CROSSOVER": "绳索交叉"
+    "CABLE_CROSSOVER": "绳索交叉",
+    "LAT_PULLDOWN": "高位下拉",
+    "LATERAL_RAISE": "侧平举",
 }
 
 export const translate = (key) => mapping[key] || key
