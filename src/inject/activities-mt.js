@@ -44,9 +44,9 @@ observe(document.querySelector("div.main-body"), onMutated({
                 document.querySelector("div.sorter").before(n)
               ),
               [
-                trend(rs, "DUMBBELL_SHOULDER_PRESS"),
-                trend(rs, "BARBELL_BACK_SQUAT"),
-                trend(rs, "DUMBBELL_BENCH_PRESS"),
+                trend(rs, "SHOULDER_PRESS_DUMBBELL_SHOULDER_PRESS"), //哑铃推肩
+                trend(rs, "SQUAT_BARBELL_BACK_SQUAT"), //杠铃深蹲
+                trend(rs, "BENCH_PRESS_DUMBBELL_BENCH_PRESS"), //哑铃卧推
               ].flatMap((t) => t),
               {
                 title: "重量趋势",
@@ -66,7 +66,7 @@ function exerciseWithMaxProbability(exercises) {
         return item.probability > acc.probability ? item : acc;
     }, { probability: -Infinity });
 
-    return categoryWithMaxProbability.name || categoryWithMaxProbability.category;
+    return categoryWithMaxProbability.category + (categoryWithMaxProbability.name === undefined ? '' : '_' +categoryWithMaxProbability.name);
 }
 
 function maxWeight(exercises) {
