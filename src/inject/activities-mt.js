@@ -23,11 +23,12 @@ observe(document.querySelector("div.main-body"), onMutated({
     },
     callback: async () => {
         const isFitness = URL.parse(window.location.href).searchParams.has("activityType", "fitness_equipment");
-        const pp = plotPanel("max", n => document.querySelector("div.sorter").before(n));
+        const maxPlot = plotPanel("max", n => document.querySelector("div.sorter").before(n));
+        const trendPlot = plotPanel("trend", n => document.querySelector("div.sorter").before(n));
         if (isFitness) {
             const rs = await historyRecords();
             Plotly.newPlot(
-              pp,
+              maxPlot,
               historyMaxWeights(rs),
               {
                 title: "历史最大重量",
@@ -40,13 +41,15 @@ observe(document.querySelector("div.main-body"), onMutated({
             );
 
             Plotly.newPlot(
-              plotPanel("trend", (n) =>
-                document.querySelector("div.sorter").before(n)
-              ),
+              trendPlot,
               [
                 trend(rs, "SHOULDER_PRESS_DUMBBELL_SHOULDER_PRESS"), //哑铃推肩
                 trend(rs, "SQUAT_BARBELL_BACK_SQUAT"), //杠铃深蹲
                 trend(rs, "BENCH_PRESS_DUMBBELL_BENCH_PRESS"), //哑铃卧推
+                trend(rs, "BENCH_PRESS_INCLINE_DUMBBELL_BENCH_PRESS"), //哑铃上斜卧推
+                trend(rs, "BENCH_PRESS_BARBELL_BENCH_PRESS"), //杠铃卧推
+                trend(rs, "BENCH_PRESS_INCLINE_BARBELL_BENCH_PRESS"), //杠铃上斜卧推
+                trend(rs, "ROW_WIDE_GRIP_SEATED_CABLE_ROW"), //坐姿宽握划船
               ].flatMap((t) => t),
               {
                 title: "重量趋势",
@@ -56,7 +59,8 @@ observe(document.querySelector("div.main-body"), onMutated({
               { responsive: true }
             );
         } else {
-            pp.remove();
+            maxPlot.remove();
+            trendPlot.remove();
         }
     }
 }));
@@ -66,7 +70,7 @@ function exerciseWithMaxProbability(exercises) {
         return item.probability > acc.probability ? item : acc;
     }, { probability: -Infinity });
 
-    return categoryWithMaxProbability.category + (categoryWithMaxProbability.name === undefined ? '' : '_' +categoryWithMaxProbability.name);
+    return categoryWithMaxProbability.category + (categoryWithMaxProbability.name === undefined || categoryWithMaxProbability.name === null ? '' : '_' +categoryWithMaxProbability.name);
 }
 
 function maxWeight(exercises) {
